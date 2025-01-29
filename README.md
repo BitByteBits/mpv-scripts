@@ -1,4 +1,4 @@
-# My Personal MPV Scripts
+# My MPV Scripts
 
 ### Toggle Loudness Equalization
 **Script:** `toggle_loudness_equalization`
