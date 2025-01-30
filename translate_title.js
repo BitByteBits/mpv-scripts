@@ -53,7 +53,6 @@ function saveCache(cache) {
 
 function translateTitle(dest) {
     var title = mp.get_property("media-title").trim();
-    var dest = dest | "en";
 
     // don't translate if it has [TL] in title
     if (typeof title === 'string' && title.match(/\[TL\]/)) {
@@ -87,7 +86,7 @@ function translateTitle(dest) {
                 //displayOverlay("Title is already in " + dest);
                 cache[title] = title;
                 saveCache(cache);
-                msg.info("Title is already in " + dest);
+                msg.info("Title is already in " + dest.toUpperCase());
                 return;
             }
 
