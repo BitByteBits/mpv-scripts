@@ -7,11 +7,14 @@
  * @TODO: check if maybe in the future I can set force-media-title to change the title in playlist without messing up the order similar to https://github.com/tomasklaen/uosc/issues/793
  */
 
-var curl = "scurl" // because windows built-in curl doesn't support http2
-var destLang = "en" // destination language
+var opts = {
+    active: true, // active by default
+    curl: "scurl", // curl executable filename
+	destination: "en" // destination language
+};
 
-var msg = mp.msg;
-var utils = mp.utils;
+var msg = mp.msg, utils = mp.utils;
+mp.options.read_options(opts, "translate_title");
 
 function displayOverlay(text) {
 	var a = mp.create_osd_overlay("ass-events")
@@ -52,12 +55,13 @@ function saveCache(cache) {
 }
 
 function translateTitle(dest) {
-    var title = mp.get_property("media-title").trim();
+    if (!opts.active) return;
 
+    var title = mp.get_property("media-title").trim();
     // don't translate if it has [TL] in title
     if (typeof title === 'string' && title.match(/\[TL\]/)) {
         //displayOverlay("Filename is already translated");
-		msg.info("Title is already translated");
+		msg.warn("Title is already translated");
         return;
     }
 
@@ -73,7 +77,7 @@ function translateTitle(dest) {
     var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=' + dest + '&dt=t&q=' + encodeURIComponent(title);
     mp.command_native_async({
         name: "subprocess",
-        args: [curl, "-s", url],
+        args: [opts.curl, "-s", url],
         capture_stderr: true,
         capture_stdout: true
     }, function (success, result, error) {
@@ -101,6 +105,6 @@ function translateTitle(dest) {
     });
 }
 
-mp.register_event("file-loaded", function() {
-    translateTitle(destLang);
+mp.register_event("file-loaded", function () {
+    translateTitle(opts.destination);
 });
